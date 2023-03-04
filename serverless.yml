@@ -1,0 +1,163 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: ${env:REGION}
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: go1.x
+  stage: dev
+  region: ${env:REGION}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:PutItem"
+        - "dynamodb:GetItem"
+        - "dynamodb:UpdateItem"
+        - "dynamodb:Scan"
+      Resource: "arn:aws:dynamodb:${aws:region}:*:*"
+    - Effect: "Allow"
+      Action:
+        - "s3:GetObject"
+        - "s3:GetObjectAcl"
+        - "s3:PutObject"
+        - "s3:PutObjectAcl"
+      Resource: "arn:aws:s3:::*"
+  ecr:
+    images:
+      web:
+        path: ./
+        file: Dockerfile
+
+package:
+ exclude:
+   - ./**
+ include:
+   - ./api/bin/**
+   - ./api/bin/.fonts/*
+
+functions:
+  page-create:
+    handler: api/bin/page-create
+    events:
+      - http:
+          path: page/create
+          method: post
+    environment:
+      REGION: ${aws:region}
+      SITE_BUCKET: ${env:BUCKET_NAME_SITE}
+    url: true
+  page-load:
+    handler: api/bin/page-load
+    events:
+      - http:
+          path: page/load
+          method: get
+    environment:
+      REGION: ${aws:region}
+    url: true
+  page-update:
+    handler: api/bin/page-update
+    events:
+      - http:
+          path: page/update
+          method: post
+    environment:
+      REGION: ${aws:region}
+    url: true
+  screenshot:
+    environment:
+      AFTER_LOADED_WAIT: 150
+      SCREENSHOT_JPG_QUALITY: 90
+      RESOLUTION_W: 768
+      RESOLUTION_H: 432
+      JPG_QUALITY: 90
+      BUCKET_NAME: !Ref screenshotBucket
+      REGION: ${aws:region}
+    handler: api/bin/screenshot
+    events:
+      - http:
+          path: screenshot
+          method: post
+    url: true
+    timeout: 30
+    memorySize: 2048
+
+resources:
+  Resources:
+    pageTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Page
+        AttributeDefinitions:
+          - AttributeName: pageId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pageId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    screenshotBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${env:BUCKET_NAME}
+        AccessControl: PublicRead
+    screenshotBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: !Ref screenshotBucket
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - "s3:GetObject"
+              Resource:
+                - !Sub "${screenshotBucket.Arn}/*"
+              Principal: "*"
+    websiteBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${env:BUCKET_NAME_SITE}
+        AccessControl: PublicRead
+        WebsiteConfiguration:
+          IndexDocument: index.html
+          ErrorDocument: error.html
+    websiteBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: !Ref websiteBucket
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - "s3:GetObject"
+              Resource:
+                - !Sub "${websiteBucket.Arn}/*"
+              Principal: "*"
+
+custom:
+  s3Sync:
+    - bucketName: ${env:BUCKET_NAME_SITE}
+      localDir: web/build
+      deleteRemoved: false
+      params:
+        - index.html:
+            CacheControl: 'no-cache'
+        - "*.js":
+            CacheControl: 'public, max-age=31536000'
+
+plugins:
+  - serverless-s3-sync

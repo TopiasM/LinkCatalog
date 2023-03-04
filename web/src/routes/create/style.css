@@ -1,0 +1,18 @@
+.create-btn {
+    width: 100%;
+    background-color: #333;
+    color: #FFF;
+    font-size: 1.25rem;
+    padding: 6px;
+    border-radius: 5px;
+    margin-bottom: 16px;
+    cursor: pointer;
+}
+
+.url-container {
+    display: flex;
+}
+
+.url-container > input {
+    font-size: 1.3rem;
+} 

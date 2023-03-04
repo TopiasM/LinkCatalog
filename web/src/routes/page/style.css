@@ -1,0 +1,15 @@
+.profile {
+	min-height: 100%;
+	width: 100%;
+}
+
+.title {
+	font-size: var(--title-size);
+	margin: 8px 0px;
+}
+
+.description {
+	font-size: var(--description-size);
+	font-weight: var(--description-weight);
+	margin: 6px 0px;
+}

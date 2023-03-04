@@ -1,0 +1,19 @@
+
+.container > textarea {
+	font-size: var(--description-size);
+	font-weight: var(--description-weight);
+	margin: 6px 0px;
+}
+
+.container > .title {
+	font-size: var(--title-size);
+	margin: 8px 0px;
+}
+
+#link-form > .link-area {
+	text-align: left;
+}
+
+input:focus::placeholder, textarea:focus::placeholder {
+  color: transparent;
+}
