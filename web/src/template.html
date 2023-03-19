@@ -13,7 +13,13 @@
 		<% } %>
 	</head>
 	<body>
-		<script type="module" src="<%= cli.entrypoints['bundle'] %>"></script>
+		<div id="app"></div>
+		<%= cli.ssr %>
+		<% if (cli.config.prerender === true) { %>
+			<script type="__PREACT_CLI_DATA__">
+				<%= encodeURI(JSON.stringify(cli.CLI_DATA)) %>
+			</script>
+		<% } %>
 		<script nomodule src="<%= cli.entrypoints['dom-polyfills'] %>"></script>
 		<script nomodule src="<%= cli.entrypoints['es-polyfills'] %>"></script>
 		<script nomodule defer src="<%= cli.entrypoints['legacy-bundle'] %>"></script>

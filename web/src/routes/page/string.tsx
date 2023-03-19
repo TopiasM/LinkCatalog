@@ -1,3 +1,51 @@
+import { h, Fragment } from 'preact';
+import { Page } from 'src/types'
+import Footer from '../../components/footer'
+import { renderToString } from 'preact-render-to-string'
+
+const bucketUrl = "https://linkcatalog-bucket-test.s3.us-west-2.amazonaws.com/public/screenshots"
+
+export const staticPageHtml = async(page: Page) => {
+    const tsx = (
+        <>
+            <h1 class="title">{page.title}</h1>
+            <h5 class="description">{page.mainDescription}</h5>
+            <div id='link-grid'>
+                { page.links.map(link => 
+                    <div class="link-container">
+                        <img src={`${bucketUrl}/${link.filename}`}/>
+                        <h3 class="title">{link.title}</h3>
+                        <p class="description">{link.description}</p>
+                    </div>
+                )}
+            </div>
+            <Footer />
+        </>
+    )
+
+    const content = renderToString(tsx)
+    
+    const html = `
+        <!DOCTYPE html>
+        <html lang="en">
+            <head>
+                <meta charset="utf-8">
+                <title>Page</title>
+                <meta name="viewport" content="width=device-width,initial-scale=1">
+                <meta name="mobile-web-app-capable" content="yes">
+                <meta name="apple-mobile-web-app-capable" content="yes">
+                <style>${css}</style>
+            </head>
+            <body>
+                ${content}
+            </body>
+        </html>
+    `;
+
+    return html
+}
+
+const css = `
 :root {
 	--title-size: calc(1.375rem + 1.5vw);
 	--description-size: 1.25rem;
@@ -7,12 +55,11 @@
 	--grid-breakpoint: 768px;
 	--text-color: #222;
 	--bg-color: #f2f2f2;
-	--dark-bg-color: #020202;
 	--border-color: #0002;
 }
 
 html, body {
-	min-height: 100%;
+	min-height: 100vh;
     position: relative;
 	height: auto;
 	width: 100%;
@@ -38,7 +85,7 @@ body {
 	margin: auto;
 }
 
-input, textarea:not(.link-input) {
+input:not(.link-input), textarea {
 	width: 100%;
     background-color: #fff0;
     text-align: center;
@@ -61,28 +108,6 @@ input, textarea:not(.link-input) {
 	#link-grid { grid-template-columns: 100%; }
 }
 
-
-/** From components/pages **/
-
-.create-btn, .update-btn {
-    width: 100%;
-    background-color: var(--text-color);
-    color: var(--bg-color);
-    font-size: 1.25rem;
-    padding: 6px;
-    border-radius: 5px;
-	margin-bottom: 30px;
-	cursor: pointer;
-}
-
-.url-container {
-    display: flex;
-}
-
-.url-container > input {
-    font-size: 1.3rem;
-} 
-
 .profile {
 	min-height: 100%;
 	width: 100%;
@@ -97,10 +122,6 @@ input, textarea:not(.link-input) {
 	font-size: var(--description-size);
 	font-weight: var(--description-weight);
 	margin: 6px 0px;
-}
-
-input {
-	width: 100%;
 }
 
 .link-container > img, .img-placeholder {
@@ -149,33 +170,6 @@ input {
 	margin: 8px 0px;
 }
 
-#link-form > .link-area {
-	text-align: left;
-}
-
-.container > input:focus::placeholder, .container > textarea:focus::placeholder {
-  color: transparent;
-}
-
-.action {
-	float: right;
-	margin: 0px 2px 2px 8px;
-	color: var(--text-color);
-	font-size: 18px;
-}
-
-.action:hover {
-	color: #444;
-}
-
-.action.drag {
-	cursor: move;
-}
-
-.action.del {
-	cursor: pointer;
-}
-
 .header {
 	text-align: left;
 }
@@ -185,47 +179,18 @@ input {
 	margin-bottom: 12px;
 }
 
-#link-form {
-	background-color: var(--dark-bg-color);
-    border-radius: 8px;
-    margin: 0px -2px;
-	padding: 16px;
-	text-align: left;
-	line-height: 1.4;
+footer {
+	position: absolute;
+	right: 10px;
+    bottom: 0px;
+	padding-bottom: 8px;
 }
 
-#link-form > label {
-	color: #959595;
+footer > h4 {
+	display: inline;
 }
 
-.link-input {
-	background-color: #393F44;
-	color: #F5F6F6;
-	width: 100%;
-	resize: none;
-	font-size: 1.1rem;
-	border-radius: 4px;
-	overflow: hidden;
+footer img {
+	vertical-align: text-bottom;
 }
-
-.link-input:focus-visible {
-	outline: none;
-	border-top-width: 0px;
-    border-bottom-width: 1.8px;
-}
-
-#link-form > button {
-	width: 100%;
-    background-color: #0000;
-    border: 1.8px solid #757575;
-    font-size: 1rem;
-    color: #959595;
-	border-radius: 4px;
-	font-weight: 600;
-}
-
-#link-form > button:disabled {
-	font-weight: 400;
-	border-width: 1px;
-	color: #95959560;
-}
+`;

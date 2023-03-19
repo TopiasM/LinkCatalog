@@ -3,6 +3,8 @@ import { StateUpdater, useEffect, useState } from 'preact/hooks';
 import { Page as PageT, Link } from 'src/types'
 import LinkContainer from '../../components/link'
 import PageForm from '../../components/form';
+import { staticPageHtml } from '../page/string'
+import { pageUpdateApi, pageLoadApi } from '../../constants'
 
 interface Props {
     pageId: string,
@@ -11,7 +13,7 @@ interface Props {
 
 const getPage = async(pageId: string, setPage: StateUpdater<PageT>, editKey: string | undefined) => {
 	const params = editKey ? `?pageId=${pageId}&editKey=${editKey}` : `?pageId=${pageId}`;	
-	return await fetch(`https://g2bqowyw7g2vnzucnu37zuubmy0xzhjp.lambda-url.us-west-2.on.aws${params}`, {
+	return await fetch(`${pageLoadApi}${params}`, {
 		method: 'GET',
 	})
 	.then( resp => resp.json())
@@ -34,9 +36,11 @@ const Page = ({ pageId, editKey }: Props) => {
 	}
 
 	const updatePage = async() => {
-		await fetch('https://777koiseriztacjrrjgyvt5jsm0zdqiq.lambda-url.us-west-2.on.aws', {
+		const html = await staticPageHtml(page)
+		const pageSend = {...page, html: html}
+		await fetch(pageUpdateApi, {
 			method: 'POST',
-			body: JSON.stringify(page),
+			body: JSON.stringify(pageSend),
 		})
 		.then( resp => resp.json())
 		.then( data => {
@@ -73,7 +77,7 @@ const Page = ({ pageId, editKey }: Props) => {
 						)}
 					</div>
 					{ page.editConfirmationKey &&
-						<button disabled={page.links.length < 2 ? true : false} onClick={() => updatePage()}>Update Page</button>
+						<button class="update-btn" disabled={page.links.length < 2 ? true : false} onClick={() => updatePage()}>Update Page</button>
 					}
 				</>
 				: 'loading'

@@ -1,6 +1,7 @@
 import { Fragment, h } from 'preact';
 import { Link, Page } from '../../types'
 import { StateUpdater, useEffect, useState } from 'preact/hooks'
+import { screenshotApi } from '../../constants'
 
 interface Props {
     page: Page,
@@ -28,15 +29,15 @@ const PageForm = ({page, setPage} : Props) => {
 		if(newLinkIdx != 0 && page.links.length != newLinkIdx) setNewLinkIdx(page.links.length)
 	}, [page])
 
-	const formChange = (e: h.JSX.TargetedEvent<HTMLInputElement | HTMLTextAreaElement, Event>) => {
-		const el = e.target as HTMLInputElement
-		const prop: string = el.name 
+	const formChange = (e: h.JSX.TargetedEvent<HTMLTextAreaElement>) => {
+		const el = e.currentTarget
+	
+		const borderWidth = getComputedStyle(el).borderLeftWidth
+		el.setAttribute('style', 'height: ""')
+		let height = el.scrollHeight + (+(borderWidth.substring(0,borderWidth.length -2))*2)
+		el.setAttribute('style', `height: ${height}px;`)
 		
-		if(prop === 'mainDescription') { // Hack for description textarea to stretch so text fits
-			el.setAttribute('style', 'height: ""')
-			el.setAttribute('style', `height: ${el.scrollHeight+3}px;`)
-		}
-		
+		const prop: string = el.name
 		if(prop === 'title' || prop === 'mainDescription') {
 			var newPage = page
 			newPage[prop] = el.value
@@ -83,7 +84,7 @@ const PageForm = ({page, setPage} : Props) => {
 	const fetchUrl = async(url: string, idx: number) => {
 		let loadingLink = {url: url, filename: '', description: '', title: `Fetching ${url}`}
 		setNewLink({link: loadingLink, idx: idx})
-		await fetch(`https://l7jfni4okyw3323pt6qyuwut640xinsv.lambda-url.us-west-2.on.aws`, {
+		await fetch(screenshotApi, {
 			method: 'POST',
 			body: url,
 		})
@@ -99,10 +100,20 @@ const PageForm = ({page, setPage} : Props) => {
 	}
 
 	const urlPattern = /([a-z,0-9]+\.+[a-z])./;
-	const urlInputChange = (url: string) => {
-		setUrl(url)
-		if(url.includes(',')) {
-			const urls = url.split(',')
+	const urlInputChange = (e: h.JSX.TargetedEvent<HTMLTextAreaElement, Event>) => {
+		const el = e.currentTarget 
+		const urlInput = el.value
+		
+		if(encodeURI(urlInput.slice(-1)) == "%0A") { //If Enter pressed
+			setUrl('')
+			if(validUrl) fetchUrls()
+			return	
+		}
+		
+		formChange(e)
+		setUrl(urlInput)
+		if(urlInput.includes(',')) {
+			const urls = urlInput.split(',')
 			const tests = urls.map(u => urlPattern.test(u))
 			const valid = tests.includes(false) ? false : true;
 			setValidUrl(valid)
@@ -118,8 +129,9 @@ const PageForm = ({page, setPage} : Props) => {
                 <textarea rows={2} placeholder="Description" value={page.mainDescription} name="mainDescription" onInput={formChange}/>
             </form>
             <div id="link-form">
-                <textarea rows={1} class="link-area" type="text" autoComplete="off" value={url} placeholder="Type a web address(es) here" name="link" onInput={e => urlInputChange((e.target as HTMLInputElement).value)}/>
-                <button disabled={!validUrl} onClick={fetchUrls}>fetch</button>
+				<label>Type web address(es) below</label>
+                <textarea rows={1} class="link-input" type="text" autoComplete="off" autoCapitalize="none" autoCorrect="off" value={url} placeholder="" name="links" onInput={urlInputChange}/>
+                <button disabled={!validUrl} onClick={fetchUrls}>Fetch</button>
             </div>
         </>
     )

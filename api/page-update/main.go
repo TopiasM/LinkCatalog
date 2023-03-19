@@ -2,6 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"log"
+	"os"
+	"sync"
+	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -9,10 +13,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-
-	"log"
-	"os"
-	"time"
 
 	"linkcatalog-sls/shared"
 )
@@ -22,6 +22,7 @@ type Return struct {
 }
 
 var region string = os.Getenv("REGION")
+var wg sync.WaitGroup
 
 const tableName string = "Page"
 
@@ -36,6 +37,22 @@ func LambdaHandler(request events.APIGatewayProxyRequest) (events.APIGatewayProx
 }
 
 func updatePage(page shared.PageWithKeys) uint8 {
+	wg.Add(1)
+	go func() {
+		shared.InsertPageToBucket(page.Html, page.PageId)
+		wg.Done()
+	}()
+
+	wg.Add(1)
+	c := make(chan uint8)
+	go updatePageInDb(page, c)
+
+	result := <-c
+	wg.Wait()
+	return result
+}
+
+func updatePageInDb(page shared.PageWithKeys, cOut chan<- uint8) {
 	sess, err := session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
 		Config: aws.Config{
@@ -49,7 +66,6 @@ func updatePage(page shared.PageWithKeys) uint8 {
 	svc := dynamodb.New(sess)
 
 	links, err := dynamodbattribute.MarshalList(page.Links)
-	log.Printf("%s", links)
 	dbInput := &dynamodb.UpdateItemInput{
 		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
 			":t": {
@@ -91,7 +107,8 @@ func updatePage(page shared.PageWithKeys) uint8 {
 		result = 0
 		log.Printf("%s", err)
 	}
-	return result
+	cOut <- result
+	wg.Done()
 }
 
 func main() {

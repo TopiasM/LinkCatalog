@@ -35,6 +35,11 @@ provider:
         - "s3:PutObject"
         - "s3:PutObjectAcl"
       Resource: "arn:aws:s3:::*"
+    - Effect: Allow
+      Sid: AllowCloudFrontUpdateDistribution
+      Action:
+        - cloudfront:updateDistribution
+      Resource: "*"
   ecr:
     images:
       web:
@@ -76,7 +81,9 @@ functions:
           method: post
     environment:
       REGION: ${aws:region}
+      SITE_BUCKET: ${env:BUCKET_NAME_SITE}
     url: true
+    timeout: 10
   screenshot:
     environment:
       AFTER_LOADED_WAIT: 150

@@ -1,8 +1,11 @@
 package main
 
 import (
-	"strings"
+	"encoding/json"
+	"log"
+	"os"
 	"sync"
+	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -10,12 +13,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-
-	"encoding/json"
-	"log"
-	"os"
-	"time"
 
 	"linkcatalog-sls/shared"
 )
@@ -44,7 +41,10 @@ func createPage(page shared.PageWithKeys) string {
 	page.PageId = pageId
 
 	wg.Add(1)
-	go insertPageToBucket(page.Html, pageId)
+	go func() {
+		shared.InsertPageToBucket(page.Html, pageId)
+		wg.Done()
+	}()
 
 	timeNow := time.Now()
 	time := timeNow.Format("2006-01-02 15:04:05")
@@ -100,7 +100,7 @@ func insertPageToDB(page shared.PageWithKeys) {
 	wg.Done()
 }
 
-func insertPageToBucket(html string, pageId string) {
+/*func insertPageToBucket(html string, pageId string, wg sync.WaitGroup) {
 	bucket := aws.String(siteBucket)
 
 	uploader := s3manager.NewUploader(session.New(&aws.Config{
@@ -121,7 +121,7 @@ func insertPageToBucket(html string, pageId string) {
 
 	log.Printf("%v Page upload done", pageId)
 	wg.Done()
-}
+}*/
 
 func main() {
 	lambda.Start(LambdaHandler)

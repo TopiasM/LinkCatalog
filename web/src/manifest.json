@@ -1,11 +1,11 @@
 {
-  "name": "lingcatalog",
-  "short_name": "lingcatalog",
+  "name": "Link Catalog",
+  "short_name": "Link Catalog",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#fff",
-  "theme_color": "#673ab8",
+  "theme_color": "#020202",
   "icons": [
     {
       "src": "/assets/icons/android-chrome-192x192.png",

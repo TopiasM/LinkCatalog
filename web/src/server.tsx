@@ -2,8 +2,6 @@ import express from 'express';
 import { h } from 'preact';
 import { render } from 'preact-render-to-string'
 import StaticPage from './routes/page'
-import Home from './routes/home'
-import CreatePage from './routes/create'
 import path from 'path'
 import axios from 'axios'
 import { Page } from 'src/types'
@@ -22,7 +20,7 @@ app.get('/p/:pageId', async(req, res) => {
     const page: Page = await axios.get<Page>(url)
         .then(res => res.data)
 
-    const tsx = <StaticPage page={page} />
+    const tsx = <StaticPage page={page} /> 
     
     const content = render(tsx)
     const html = `
@@ -44,39 +42,18 @@ app.get('/p/:pageId', async(req, res) => {
     res.send(html)
 })
 
-app.get('/', async(req, res) => {
-    const tsx = (
-        <Home/>
-    )
-    const content = render(tsx)
-
-    const html = `
-        <!DOCTYPE html>
-        <html lang="en">
-            <head>
-                <meta charset="utf-8">
-                <title>Page</title>
-                <meta name="viewport" content="width=device-width,initial-scale=1">
-                <meta name="mobile-web-app-capable" content="yes">
-                <meta name="apple-mobile-web-app-capable" content="yes">
-                <style>${css}</style>
-            </head>
-            <body>
-                ${content}
-            </body>
-        </html>
-    `;
-    res.send(html)
-})
-
 //CSR
 app.use(express.static(path.join(__dirname, '../build')))
-app.get('/create', (req, res) => {
+app.get('/', async(req, res) => {
     res.sendFile(path.join(__dirname, '../build', 'index.html'))
+})
+
+app.get('/create', (req, res) => {
+    res.sendFile(path.join(__dirname, '../build/create', 'index.html'))
 })
 
 app.get('/p/:p/e/:e', (req, res) => {
-    res.sendFile(path.join(__dirname, '../build', 'index.html'))
+    res.sendFile(path.join(__dirname, '../build/empty', 'index.html'))
 })
 
 app.listen(port, () => {
