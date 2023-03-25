@@ -100,29 +100,6 @@ func insertPageToDB(page shared.PageWithKeys) {
 	wg.Done()
 }
 
-/*func insertPageToBucket(html string, pageId string, wg sync.WaitGroup) {
-	bucket := aws.String(siteBucket)
-
-	uploader := s3manager.NewUploader(session.New(&aws.Config{
-		Region: aws.String(region)}),
-	)
-
-	bytes := strings.NewReader(html)
-
-	_, err := uploader.Upload(&s3manager.UploadInput{
-		Bucket:      bucket,
-		Key:         aws.String(strings.Join([]string{"p/", pageId}, "")),
-		Body:        bytes,
-		ContentType: aws.String("text/html"),
-	})
-	if err != nil {
-		log.Printf("Upload fail")
-	}
-
-	log.Printf("%v Page upload done", pageId)
-	wg.Done()
-}*/
-
 func main() {
 	lambda.Start(LambdaHandler)
 }

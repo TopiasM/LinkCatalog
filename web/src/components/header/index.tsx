@@ -1,6 +1,7 @@
 import { h, Fragment } from 'preact';
+import { assetsUrl } from '../../constants'
 
-const logoUrl = 'https://linkcatalog-bucket-test.s3.us-west-2.amazonaws.com/assets/LinkCatalog.svg';
+const logoUrl = `${assetsUrl}/LinkCatalog.svg`
 
 const Header = () => (
 	<>

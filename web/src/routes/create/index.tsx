@@ -5,7 +5,7 @@ import PageForm from '../../components/form'
 import { Page, Link } from '../../types'
 import Header from '../../components/header'
 import { staticPageHtml } from '../page/string'
-import { pageCreateApi } from '../../constants'
+import { pageCreateApi, assetsUrl } from '../../constants'
 
 interface PageDetails {
 	editKey: string,
@@ -15,10 +15,12 @@ interface PageDetails {
 	html?: string
 }
 
+const creatingCat = `${assetsUrl}/creating-catalog.jpg`
 
 const CreatePage = () => {
 	const [page, setPage] = useState<Page>({title: '', links: [], mainDescription: ''})
 	const [pageDetails, setPageDetails] = useState<PageDetails | undefined>(undefined)
+	const [showOverlay, setShowOverlay] = useState<boolean>(false)
 
 	const setLink = (link: Link, idx: number) => {
 		var newPage = page
@@ -31,6 +33,7 @@ const CreatePage = () => {
 		const html = await staticPageHtml(page)
 		const pageSend = {...page, html: html}
 
+		setShowOverlay(true)
 		await fetch(pageCreateApi, {
 			method: 'POST',
 			body: JSON.stringify(pageSend),
@@ -38,11 +41,13 @@ const CreatePage = () => {
 		.then( resp => resp.json())
 		.then( data => {
 			setPageDetails(data)
+			setShowOverlay(false)
 		})
 	}
 
     return(
 		<>
+			<link rel="prefetch" href={creatingCat} />
 			<Header></Header>
 			<div class='container'>
 				{ !pageDetails ?
@@ -68,6 +73,16 @@ const CreatePage = () => {
 					<PageCreated pageDetails={pageDetails}/>
 				}
 			</div>
+			{ showOverlay &&
+				<div id="creating-overlay">
+					<div class="content">
+						<div class="cool-container">
+							<img src={creatingCat} />
+						</div>
+						<h3>Creating Page</h3>
+					</div>
+				</div>
+			}
 		</>
 	)
 }

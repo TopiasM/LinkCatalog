@@ -239,7 +239,7 @@ func uploadScreenshot(fileName string, screenshot *page.CaptureScreenshotReply) 
 
 	_, err = uploader.Upload(&s3manager.UploadInput{
 		Bucket:      bucket,
-		Key:         aws.String(strings.Join([]string{"public/screenshots/", fileName}, "")),
+		Key:         aws.String(strings.Join([]string{"screenshots/", fileName}, "")),
 		Body:        bytes.NewReader(b),
 		ContentType: aws.String("image/jpeg"),
 	})

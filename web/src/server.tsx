@@ -6,6 +6,7 @@ import path from 'path'
 import axios from 'axios'
 import { Page } from 'src/types'
 import fs from 'fs'
+import { pageLoadApi } from './constants'
 
 const port = 8080
 const app = express()
@@ -15,7 +16,7 @@ const css = fs.readFileSync(path.join(__dirname, '/style', 'index.css'))
 
 app.get('/p/:pageId', async(req, res) => {
     const pageId = req.params.pageId
-    const url = `https://g2bqowyw7g2vnzucnu37zuubmy0xzhjp.lambda-url.us-west-2.on.aws?pageId=${pageId}`
+    const url = `${pageLoadApi}?pageId=${pageId}`
 
     const page: Page = await axios.get<Page>(url)
         .then(res => res.data)

@@ -165,6 +165,9 @@ custom:
             CacheControl: 'no-cache'
         - "*.js":
             CacheControl: 'public, max-age=31536000'
+    - bucketName: ${env:BUCKET_NAME}
+      localDir: assets
+      deleteRemoved: false
 
 plugins:
   - serverless-s3-sync

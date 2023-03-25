@@ -19,7 +19,7 @@ html, body {
 	padding: 0;
 	margin: 0;
 	background: var(--bg-color);
-	font-family: 'Helvetica Neue', arial, sans-serif;
+	font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 	font-weight: 400;
 	color: var(--text-color);
 	display: block;
@@ -222,10 +222,73 @@ input {
     color: #959595;
 	border-radius: 4px;
 	font-weight: 600;
+	cursor: pointer;
 }
 
 #link-form > button:disabled {
 	font-weight: 400;
 	border-width: 1px;
 	color: #95959560;
+	margin-bottom: 1px;
+	cursor: not-allowed;
+}
+
+#creating-overlay {
+	position: fixed;
+    top: 0;
+    left: 0;
+    height: 100dvh;
+    width: 100dvw;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    background-color: #FFF5;
+    align-items: center;
+}
+
+#creating-overlay > .content {
+	justify-items: center;
+    text-align: center;
+    display: block;
+	background-color: var(--dark-bg-color);
+	min-width: 320px;
+	border-radius: 8px;
+	color: #F2F2F2;
+	padding: 16px 8px;
+}
+
+#creating-overlay > .content > h3 {
+	font-weight: 400;
+	margin-bottom: 0;
+}
+
+#creating-overlay > .content img {
+	border-radius: 50%;
+	max-width: 256px;
+	max-height: 256px;
+	position: relative;
+}
+
+#creating-overlay > .content .cool-container {
+	display: inline-flex;
+	border-radius: 50%;
+	width: 260px;
+	height: 260px;
+	padding: 4px;
+	background: linear-gradient(150deg, #db04a9 0%, #db04a9 20%, #06e0fc 50%, #4907b2 80%,#4907b2 100%);
+	border-radius: 50%;
+	background-size: 400% 400%;
+	animation: gradient 1s ease-in-out infinite;
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
 }
