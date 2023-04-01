@@ -77,11 +77,22 @@ input, textarea:not(.link-input) {
 
 .url-container {
     display: flex;
+	justify-content: center;
+	max-width: 1024px;
+	margin: auto;
 }
 
 .url-container > input {
     font-size: 1.3rem;
-} 
+	background-color: var(--dark-bg-color);
+    color: var(--bg-color);
+    border-color: #fff;
+    border-right: 0;
+}
+
+.url-container > input:focus-visible {
+	outline: none;
+}
 
 .profile {
 	min-height: 100%;
@@ -138,13 +149,13 @@ input {
 }
 
 
-.container > textarea {
+.page-details-form > textarea {
 	font-size: var(--description-size);
 	font-weight: var(--description-weight);
 	margin: 6px 0px;
 }
 
-.container > .title {
+.page-details-form > .title {
 	font-size: var(--title-size);
 	margin: 8px 0px;
 }
@@ -153,7 +164,7 @@ input {
 	text-align: left;
 }
 
-.container > input:focus::placeholder, .container > textarea:focus::placeholder {
+.page-details-form > input:focus::placeholder, .page-details-form > textarea:focus::placeholder {
   color: transparent;
 }
 
@@ -178,6 +189,8 @@ input {
 
 .header {
 	text-align: left;
+	display: flex;
+	margin-bottom: -8px;
 }
 
 .header img {
@@ -185,7 +198,7 @@ input {
 	margin-bottom: 12px;
 }
 
-#link-form {
+#link-form, #edit-details {
 	background-color: var(--dark-bg-color);
     border-radius: 8px;
     margin: 0px -2px;
@@ -262,7 +275,7 @@ input {
 	margin-bottom: 0;
 }
 
-#creating-overlay > .content img {
+#creating-overlay > .content img, .created-img {
 	border-radius: 50%;
 	max-width: 256px;
 	max-height: 256px;
@@ -291,4 +304,25 @@ input {
 	100% {
 		background-position: 0% 50%;
 	}
+}
+
+#page-created-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+#edit-details {
+	max-width: 1024px;
+	margin: auto;
+	color: #959595;
+	line-height: 1.7;
+}
+
+.create-another {
+	margin-top: 16px;
+	text-decoration: none;
+	color: var(--text-color);
+	display: block;
 }

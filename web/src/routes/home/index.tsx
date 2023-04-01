@@ -1,14 +1,14 @@
 import { h, Fragment } from 'preact'
 import Header from '../../components/header'
-//import './style.css'
+import { Link } from 'preact-router/match';
 
 const Home = () => (
 	<>
 		<Header></Header>
 		<h1>Home</h1>
-		<a href="/create">
+		<Link href="/create">
 			<button>Create Page</button>
-		</a>
+		</Link>
 	</>
 );
 

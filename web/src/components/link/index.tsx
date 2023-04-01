@@ -57,7 +57,6 @@ const LinkContainer = ({link, idx, setLink, page, setPage} : Props) => {
     const swapLinks = (swapIdx: number) => {
         if(page != undefined && setPage != undefined && idx != undefined) {
             const links = page.links
-            console.log(swapIdx)
             links.splice(idx, 1, links.splice(swapIdx, 1, links[idx])[0])
             setPage({...page})
         }
@@ -69,7 +68,6 @@ const LinkContainer = ({link, idx, setLink, page, setPage} : Props) => {
         if(targetEl == undefined) return
         const name = targetEl.attributes.getNamedItem('name')?.value
         if(!name) return
-        console.log(name)
         const swapIdx = +(name.split('-')[1])
         if(idx != swapIdx) swapLinks(swapIdx)
     }

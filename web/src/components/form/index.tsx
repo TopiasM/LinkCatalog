@@ -124,10 +124,10 @@ const PageForm = ({page, setPage} : Props) => {
 
     return(
         <>
-            <form class="container">
+            <div class="page-details-form">
                 <textarea class="title" rows={1} type="text" placeholder="Title" value={page.title} name="title" onInput={formChange}/>
                 <textarea rows={2} placeholder="Description" value={page.mainDescription} name="mainDescription" onInput={formChange}/>
-            </form>
+            </div>
             <div id="link-form">
 				<label>Type web address(es) below</label>
                 <textarea rows={1} class="link-input" type="text" autoComplete="off" autoCapitalize="none" autoCorrect="off" value={url} placeholder="" name="links" onInput={urlInputChange}/>

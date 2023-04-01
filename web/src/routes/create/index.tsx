@@ -1,11 +1,12 @@
 import { h, Fragment } from 'preact'
-import { useState } from 'preact/hooks'
+import { StateUpdater, useState } from 'preact/hooks'
 import LinkContainer from '../../components/link'
+import UrlContainer from '../../components/url'
 import PageForm from '../../components/form'
 import { Page, Link } from '../../types'
 import Header from '../../components/header'
 import { staticPageHtml } from '../page/string'
-import { pageCreateApi, assetsUrl } from '../../constants'
+import { pageCreateApi, assetsUrl, appUrl } from '../../constants'
 
 interface PageDetails {
 	editKey: string,
@@ -15,10 +16,13 @@ interface PageDetails {
 	html?: string
 }
 
-const creatingCat = `${assetsUrl}/creating-catalog.jpg`
+const creatingCat = `${assetsUrl}/creating-cat.jpg`
+const createdCat = `${assetsUrl}/created-cat.jpg`
+
+const emptyPage = {title: '', links: [], mainDescription: ''}
 
 const CreatePage = () => {
-	const [page, setPage] = useState<Page>({title: '', links: [], mainDescription: ''})
+	const [page, setPage] = useState<Page>(emptyPage)
 	const [pageDetails, setPageDetails] = useState<PageDetails | undefined>(undefined)
 	const [showOverlay, setShowOverlay] = useState<boolean>(false)
 
@@ -49,7 +53,7 @@ const CreatePage = () => {
 		<>
 			<link rel="prefetch" href={creatingCat} />
 			<Header></Header>
-			<div class='container'>
+			<div>
 				{ !pageDetails ?
 					<>
 						<PageForm page={page} setPage={setPage} />
@@ -70,7 +74,7 @@ const CreatePage = () => {
 						}
 					</>
 					:
-					<PageCreated pageDetails={pageDetails}/>
+					<PageCreated pageDetails={pageDetails} setPageDetails={setPageDetails} setPage={setPage} />
 				}
 			</div>
 			{ showOverlay &&
@@ -89,35 +93,35 @@ const CreatePage = () => {
 
 interface CreatedProps {
 	pageDetails: PageDetails,
+	setPageDetails: StateUpdater<PageDetails | undefined>,
+	setPage: StateUpdater<Page>
 }
 
-const PageCreated = ({pageDetails}: CreatedProps) => {
-	const pageUrl = `/p/${pageDetails.pageId}`
-	const pageEditUrl = `/p/${pageDetails.pageId}/e/${pageDetails.editKey}`
+const PageCreated = ({pageDetails, setPageDetails, setPage}: CreatedProps) => {
+	const pageUrl = `${appUrl}/p/${pageDetails.pageId}`
+	const pageEditUrl = `${appUrl}/p/${pageDetails.pageId}/e/${pageDetails.editKey}`
 
-	const denyInput = (e: h.JSX.TargetedEvent<HTMLInputElement>, value: string) => {
-		const el = e.target as HTMLInputElement
-		el.value = value
+	const resetState = () => {
+		setPage({...emptyPage, links: []})
+		setPageDetails(undefined)
 	}
-
-	const copyToClipboard = (url: string) => navigator.clipboard.writeText(url)
-
-	const openLink = (url: string) => window.open(url, '_blank')
 
 	return(
 		<div>
-			<h1>Page Created Successfully</h1>
-			<div class="url-container">
-				<input value={pageUrl} onInput={(e) => denyInput(e, pageUrl)}></input>
-				<button onClick={() => copyToClipboard(pageUrl)}>copy</button>
-				<button onClick={() => openLink(pageUrl)}>Visit</button>
-			</div>
+			<img class="created-img" src={createdCat} />
+			<h1>Your page has been created successfully</h1>
+			<UrlContainer url={pageUrl}/>
 			<br/>
-			<div class="url-container">
-				<input value={pageEditUrl} onInput={(e) => denyInput(e, pageUrl)}></input>
-				<button onClick={() => copyToClipboard(pageEditUrl)}>copy</button>
-				<button onClick={() => openLink(pageEditUrl)}>Visit</button>
+			<div id="edit-details">
+				<label>
+					You can use the following URL to edit the page once.
+				</label>
+				<UrlContainer url={pageEditUrl}/>
+				<label>
+					The URL will expire in 2 weeks and you'll be provided a new one time URL once you visit the page.
+				</label>
 			</div>
+			<a class="create-another" onClick={resetState}>Create a another page</a>	
 		</div>
 	)
 }
