@@ -15,7 +15,7 @@ export const staticPageHtml = async(page: Page) => {
             <div id='link-grid'>
                 { page.links.map(link => 
                     <div class="link-container">
-						<a href={link.url}>
+						<a href={link.url} target="_blank">
                         	<img src={`${screenshotsUrl}/${link.filename}`}/>
 						</a>
                         <h3 class="title">{link.title}</h3>
@@ -34,7 +34,7 @@ export const staticPageHtml = async(page: Page) => {
         <html lang="en">
             <head>
                 <meta charset="utf-8">
-                <title>Page</title>
+                <title>LinkCatalog - ${page.title}</title>
                 <meta name="viewport" content="width=device-width,initial-scale=1">
                 <meta name="mobile-web-app-capable" content="yes">
                 <meta name="apple-mobile-web-app-capable" content="yes">

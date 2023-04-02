@@ -1,7 +1,7 @@
 import { h } from 'preact'
 import { Link, Page } from '../../types'
 import { StateUpdater, useEffect } from 'preact/hooks'
-import { faTrash, faArrowsUpDownLeftRight } from '@fortawesome/free-solid-svg-icons'
+import { faTrash, faArrowsUpDownLeftRight, faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { assetsUrl } from '../../constants'
 
@@ -71,15 +71,22 @@ const LinkContainer = ({link, idx, setLink, page, setPage} : Props) => {
         const swapIdx = +(name.split('-')[1])
         if(idx != swapIdx) swapLinks(swapIdx)
     }
+	
+    const openUrl = (url: string) => window.open(url, '_blank')
 
     return(
         <div class="link-container" name={`link-${idx}`}>
-            <span class="del action" onClick={() => removeLink(idx)}>
-                <FontAwesomeIcon icon={faTrash} />
-            </span>
-            <span class="drag action" draggable={true} onDragEnd={dragEnd}>
-                <FontAwesomeIcon icon={faArrowsUpDownLeftRight} />
-            </span>
+            <div>
+                <span class="visit action" onClick={() => openUrl(link.url)}>
+                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                </span>
+                <span class="del action" onClick={() => removeLink(idx)}>
+                    <FontAwesomeIcon icon={faTrash} />
+                </span>
+                <span class="drag action" draggable={true} onDragEnd={dragEnd}>
+                    <FontAwesomeIcon icon={faArrowsUpDownLeftRight} />
+                </span>
+            </div>
             { (link.filename.length == 0) ?
                 <div class="img-placeholder">
                     <img width={50} src={loadingPulse} />

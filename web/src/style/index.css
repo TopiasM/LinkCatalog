@@ -88,10 +88,40 @@ input, textarea:not(.link-input) {
     color: var(--bg-color);
     border-color: #fff;
     border-right: 0;
+	padding-left: 0px;
 }
 
 .url-container > input:focus-visible {
 	outline: none;
+}
+
+.url-container > button {
+	background: var(--dark-bg-color);
+    color: var(--bg-color);
+    border: 1.5px dashed #fff;
+	display: inline-flex;
+    align-items: center;
+	gap: 8px;
+	width: auto;
+}
+
+.url-container button:first-of-type {
+	border-right: 0;
+}
+
+.url-container > button:hover {
+	cursor: pointer;
+	background-color: #333;	
+}
+
+@media(min-width: 769px) {
+	.url-container > input {
+		padding-left: 144px;
+	}
+
+	.url-container > button {
+		width: 72px;
+	}
 }
 
 .profile {
@@ -173,6 +203,7 @@ input {
 	margin: 0px 2px 2px 8px;
 	color: var(--text-color);
 	font-size: 18px;
+	cursor: pointer;
 }
 
 .action:hover {
@@ -181,10 +212,6 @@ input {
 
 .action.drag {
 	cursor: move;
-}
-
-.action.del {
-	cursor: pointer;
 }
 
 .header {
@@ -322,7 +349,7 @@ input {
 
 .create-another {
 	margin-top: 16px;
-	text-decoration: none;
 	color: var(--text-color);
 	display: block;
+	cursor: pointer;
 }
