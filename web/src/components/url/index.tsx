@@ -1,5 +1,5 @@
 import { h } from "preact"
-import { faClipboard, faArrowUpRightFromSquare} from '@fortawesome/free-solid-svg-icons'
+import { faClipboard, faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useState } from "preact/hooks"
 

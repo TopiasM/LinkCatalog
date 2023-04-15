@@ -4,7 +4,9 @@ import { Page as PageT, Link } from 'src/types'
 import LinkContainer from '../../components/link'
 import PageForm from '../../components/form';
 import { staticPageHtml } from '../page/string'
-import { pageUpdateApi, pageLoadApi } from '../../constants'
+import { pageUpdateApi, pageLoadApi, appUrl, creatingCat } from '../../constants'
+import UrlContainer from '../../components/url'
+import { route } from 'preact-router'
 
 interface Props {
     pageId: string,
@@ -12,19 +14,25 @@ interface Props {
 }
 
 const getPage = async(pageId: string, setPage: StateUpdater<PageT>, editKey: string | undefined) => {
-	const params = editKey ? `?pageId=${pageId}&editKey=${editKey}` : `?pageId=${pageId}`;	
+	const params = editKey ? `?pageId=${pageId}&editKey=${editKey}` : `?pageId=${pageId}`	
 	return await fetch(`${pageLoadApi}${params}`, {
 		method: 'GET',
 	})
 	.then( resp => resp.json())
-	.then( data => setPage(data))
+	.then( data => {
+		const page: PageT = data
+		if(page.editConfirmationKey) setPage(data)
+		else route(`/p/${pageId}`) 
+	})
 } 
 
 const Page = ({ pageId, editKey }: Props) => {
 	const [page, setPage] = useState<PageT>({title: '', links: [], mainDescription: ''})
+	const [showOverlay, setShowOverlay] = useState<boolean>(false)
+	
 	useEffect(() => {
 		getPage(pageId, setPage, editKey)
-	}, []);
+	}, [])
     
 	const setLink = (link: Link, idx: number) => {
 		if(page) {
@@ -36,6 +44,7 @@ const Page = ({ pageId, editKey }: Props) => {
 	}
 
 	const updatePage = async() => {
+		setShowOverlay(true)
 		const html = await staticPageHtml(page)
 		const pageSend = {...page, html: html}
 		await fetch(pageUpdateApi, {
@@ -43,13 +52,13 @@ const Page = ({ pageId, editKey }: Props) => {
 			body: JSON.stringify(pageSend),
 		})
 		.then( resp => resp.json())
-		.then( data => {
-			console.log('success')
+		.then( _data => {
+			window.open(`${appUrl}/p/${pageId}`)
 		})
 	}
 
 	return (
-		<div class="profile">
+		<div id="edit-page">
 			{ page !== undefined ?
 				<>
 					{ !page.editConfirmationKey ?
@@ -59,8 +68,11 @@ const Page = ({ pageId, editKey }: Props) => {
 						</>
 						:
 						<>
-							<div>
-								New Edit Key: {page.editKey}
+							<div id="edit-details">
+								<label>
+									Your new one time edit URL
+								</label>
+								<UrlContainer url={`${appUrl}/p/${pageId}/e/${page.editKey}`}/>
 							</div>
 							<PageForm page={page} setPage={setPage} />
 						</>
@@ -82,8 +94,18 @@ const Page = ({ pageId, editKey }: Props) => {
 				</>
 				: 'loading'
 			}
+			{ showOverlay &&
+				<div id="creating-overlay">
+					<div class="content">
+						<div class="cool-container">
+							<img src={creatingCat} />
+						</div>
+						<h3>Updating Page</h3>
+					</div>
+				</div>
+			}
 		</div>
 	)
-};
+}
 
-export default Page;
+export default Page

@@ -1,12 +1,12 @@
 import { h, Fragment } from 'preact'
-import { StateUpdater, useState } from 'preact/hooks'
+import { StateUpdater, useEffect, useState } from 'preact/hooks'
 import LinkContainer from '../../components/link'
 import UrlContainer from '../../components/url'
 import PageForm from '../../components/form'
 import { Page, Link } from '../../types'
 import Header from '../../components/header'
 import { staticPageHtml } from '../page/string'
-import { pageCreateApi, assetsUrl, appUrl } from '../../constants'
+import { pageCreateApi, assetsUrl, appUrl, creatingCat, createdCat } from '../../constants'
 
 interface PageDetails {
 	editKey: string,
@@ -16,8 +16,6 @@ interface PageDetails {
 	html?: string
 }
 
-const creatingCat = `${assetsUrl}/creating-cat.jpg`
-const createdCat = `${assetsUrl}/created-cat.jpg`
 
 const emptyPage = {title: '', links: [], mainDescription: ''}
 
@@ -25,6 +23,10 @@ const CreatePage = () => {
 	const [page, setPage] = useState<Page>(emptyPage)
 	const [pageDetails, setPageDetails] = useState<PageDetails | undefined>(undefined)
 	const [showOverlay, setShowOverlay] = useState<boolean>(false)
+	
+	useEffect(() => {
+		setPage({title: '', links: [], mainDescription: ''})
+	}, [])
 
 	const setLink = (link: Link, idx: number) => {
 		var newPage = page
@@ -102,14 +104,14 @@ const PageCreated = ({pageDetails, setPageDetails, setPage}: CreatedProps) => {
 	const pageEditUrl = `${appUrl}/p/${pageDetails.pageId}/e/${pageDetails.editKey}`
 
 	const resetState = () => {
-		setPage({...emptyPage, links: []})
+		setPage({title: '', links: [], mainDescription: ''})
 		setPageDetails(undefined)
 	}
 
 	return(
 		<div>
 			<img class="created-img" src={createdCat} />
-			<h1>Your page has been created successfully</h1>
+			<h1>Your page has been created</h1>
 			<UrlContainer url={pageUrl}/>
 			<br/>
 			<div id="edit-details">

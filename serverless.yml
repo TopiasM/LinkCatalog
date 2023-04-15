@@ -30,6 +30,13 @@ provider:
       Resource: "arn:aws:dynamodb:${aws:region}:*:*"
     - Effect: "Allow"
       Action:
+        - "dynamodb:DescribeStream"
+        - "dynamodb:GetRecords"
+        - "dynamodb:GetShardIterator"
+        - "dynamodb:ListStreams"
+      Resource: "arn:aws:dynamodb:${aws:region}:*:*"
+    - Effect: "Allow"
+      Action:
         - "s3:GetObject"
         - "s3:GetObjectAcl"
         - "s3:PutObject"
@@ -40,22 +47,22 @@ provider:
       Action:
         - cloudfront:updateDistribution
       Resource: "*"
-  ecr:
-    images:
-      web:
-        path: ./
-        file: Dockerfile
+#  ecr:
+#    images:
+#      web:
+#        path: ./
+#        file: Dockerfile
 
 package:
  exclude:
    - ./**
  include:
-   - ./api/bin/**
-   - ./api/bin/.fonts/*
+   - ./functions/bin/**
+   - ./functions/bin/.fonts/*
 
 functions:
   page-create:
-    handler: api/bin/page-create
+    handler: functions/bin/page-create
     events:
       - http:
           path: page/create
@@ -65,7 +72,7 @@ functions:
       SITE_BUCKET: ${env:BUCKET_NAME_SITE}
     url: true
   page-load:
-    handler: api/bin/page-load
+    handler: functions/bin/page-load
     events:
       - http:
           path: page/load
@@ -74,7 +81,7 @@ functions:
       REGION: ${aws:region}
     url: true
   page-update:
-    handler: api/bin/page-update
+    handler: functions/bin/page-update
     events:
       - http:
           path: page/update
@@ -93,7 +100,7 @@ functions:
       JPG_QUALITY: 90
       BUCKET_NAME: !Ref screenshotBucket
       REGION: ${aws:region}
-    handler: api/bin/screenshot
+    handler: functions/bin/screenshot
     events:
       - http:
           path: screenshot
@@ -101,6 +108,21 @@ functions:
     url: true
     timeout: 30
     memorySize: 2048
+  og-image-create:
+    handler: functions/bin/og-image-create
+    events:
+      - stream:
+          type: dynamodb
+          arn: !GetAtt pageTable.StreamArn
+          batchSize: 1
+          maximumRetryAttempts: 1
+    environment:
+      RESOLUTION_W: 1200
+      RESOLUTION_H: 630
+      JPG_QUALITY: 90
+      BUCKET_NAME: !Ref screenshotBucket
+      REGION: ${aws:region}
+  
 
 resources:
   Resources:
@@ -115,6 +137,8 @@ resources:
           - AttributeName: pageId
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
+        StreamSpecification:
+          StreamViewType: KEYS_ONLY
     screenshotBucket:
       Type: AWS::S3::Bucket
       Properties:

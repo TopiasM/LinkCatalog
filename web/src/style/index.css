@@ -246,6 +246,7 @@ input {
 	font-size: 1.1rem;
 	border-radius: 4px;
 	overflow: hidden;
+	padding: 2px 8px;
 }
 
 .link-input:focus-visible {
@@ -345,6 +346,12 @@ input {
 	margin: auto;
 	color: #959595;
 	line-height: 1.7;
+}
+
+#edit-page #edit-details {
+	max-width: 100%;
+	margin-bottom: 16px;
+	text-align: center;
 }
 
 .create-another {

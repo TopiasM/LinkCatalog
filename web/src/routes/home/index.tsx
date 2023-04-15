@@ -7,7 +7,7 @@ const Home = () => (
 		<Header></Header>
 		<h1>Home</h1>
 		<Link href="/create">
-			<button>Create Page</button>
+			<button class="create-btn">Create Page</button>
 		</Link>
 	</>
 );

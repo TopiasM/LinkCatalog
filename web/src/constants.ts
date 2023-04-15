@@ -8,3 +8,6 @@ export const pageUpdateApi  = `${apiUrl}/page/update`
 export const assetsUrl = process.env.PREACT_APP_ASSETS_URL
 
 export const appUrl = process.env.PREACT_APP_URL
+
+export const creatingCat = `${assetsUrl}/creating-cat.jpg`
+export const createdCat = `${assetsUrl}/created-cat.jpg`

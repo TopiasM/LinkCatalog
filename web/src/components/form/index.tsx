@@ -129,7 +129,7 @@ const PageForm = ({page, setPage} : Props) => {
                 <textarea rows={2} placeholder="Description" value={page.mainDescription} name="mainDescription" onInput={formChange}/>
             </div>
             <div id="link-form">
-				<label>Type web address(es) below</label>
+				<label>Type web address(es) below (multiple addresses need to be separated by a comma)</label>
                 <textarea rows={1} class="link-input" type="text" autoComplete="off" autoCapitalize="none" autoCorrect="off" value={url} placeholder="" name="links" onInput={urlInputChange}/>
                 <button disabled={!validUrl} onClick={fetchUrls}>Fetch</button>
             </div>
