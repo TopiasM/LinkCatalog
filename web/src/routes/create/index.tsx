@@ -36,6 +36,9 @@ const CreatePage = () => {
 	}
 
 	const createPage = async() => {
+		const filenames = page.links.map(l => l.filename)
+		if(filenames.includes('')) return;
+
 		const html = await staticPageHtml(page)
 		const pageSend = {...page, html: html}
 
