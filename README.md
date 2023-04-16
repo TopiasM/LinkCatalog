@@ -23,4 +23,5 @@ A website that allows a user to create a shareable 'catalog' of links without si
   - User input validation
   - Security improvements
   - Features & Bug fixes
+  - Clean the codebase
   - etc...
