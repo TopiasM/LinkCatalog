@@ -4,7 +4,7 @@ import Header from '../../components/header'
 const NotFound = () => (
 	<div>
 		<Header/>
-		<h3>Page doesn't exist</h3>
+		<h3>404 Not Found</h3>
 	</div>
 );
 

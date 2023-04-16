@@ -1,15 +1,15 @@
-import { h } from 'preact'
+import { h, Fragment } from 'preact'
 import Header from '../../components/header'
-//import './style.css'
+import { Link } from 'preact-router/match';
 
 const Home = () => (
-	<div>
+	<>
 		<Header></Header>
 		<h1>Home</h1>
-		<a href="/create">
-			<button>Create Page</button>
-		</a>
-	</div>
+		<Link href="/create">
+			<button class="create-btn">Create Page</button>
+		</Link>
+	</>
 );
 
 export default Home;

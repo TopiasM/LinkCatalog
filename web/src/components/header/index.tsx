@@ -1,16 +1,15 @@
 import { h, Fragment } from 'preact';
+import { assetsUrl } from '../../constants'
+import { Link } from 'preact-router/match';
 
-const logoUrl = 'https://linkcatalog-bucket-test.s3.us-west-2.amazonaws.com/assets/LinkCatalog.svg';
+const logoUrl = `${assetsUrl}/LinkCatalog.svg`
 
 const Header = () => (
-	<>
-		<header class="header">
-			<a href="/">
-				<img height={24} src={logoUrl}></img>
-			</a>
-		</header>
-		<br/>
-	</>
+	<header class="header">
+		<Link href="/">
+			<img alt="LinkCatalog logo" width={165.5} height={24} src={logoUrl} />
+		</Link>
+	</header>
 )
 
 export default Header;

@@ -2,10 +2,10 @@
 .serverless
 
 # golang output binary directory
-api/bin
+functions/bin
 
 # golang vendor (dependencies) directory
-api/vendor
+functions/vendor
 
 # Binaries for programs and plugins
 *.exe

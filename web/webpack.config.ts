@@ -1,5 +1,7 @@
-import { Configuration } from "webpack"
+import { Configuration, ProvidePlugin, DefinePlugin } from "webpack"
+import dotenv from 'dotenv'
 
+dotenv.config()
 const config: Configuration = {
     entry: "./src/server.tsx",
     module: {

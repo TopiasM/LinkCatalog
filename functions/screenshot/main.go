@@ -40,7 +40,7 @@ type Ret struct {
 	Title    string `json:"title"`
 }
 
-const hcPath string = "./api/bin/headless_shell"
+const hcPath string = "./functions/bin/headless_shell"
 
 var bucketName string = os.Getenv("BUCKET_NAME")
 var region string = os.Getenv("REGION")
@@ -65,7 +65,7 @@ var wg sync.WaitGroup
 // Init sets home env variable, so the jp / kr / cn fonts get loaded from the .fonts folder
 // And runs headless chrome in coroutine and waits for it to start
 func init() {
-	if err := os.Setenv("HOME", "./api/bin/"); err != nil {
+	if err := os.Setenv("HOME", "./functions/bin/"); err != nil {
 		log.Printf("Setenv err: %s", err)
 	}
 
@@ -239,7 +239,7 @@ func uploadScreenshot(fileName string, screenshot *page.CaptureScreenshotReply) 
 
 	_, err = uploader.Upload(&s3manager.UploadInput{
 		Bucket:      bucket,
-		Key:         aws.String(strings.Join([]string{"public/screenshots/", fileName}, "")),
+		Key:         aws.String(strings.Join([]string{"screenshots/", fileName}, "")),
 		Body:        bytes.NewReader(b),
 		ContentType: aws.String("image/jpeg"),
 	})

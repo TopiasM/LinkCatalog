@@ -1,7 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
+	"os"
 	"strings"
 	"time"
 
@@ -11,10 +14,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-
-	"encoding/json"
-	"log"
-	"os"
 
 	"linkcatalog-sls/shared"
 )

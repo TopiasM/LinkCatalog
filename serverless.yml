@@ -11,7 +11,7 @@
 #
 # Happy Coding!
 
-service: ${env:REGION}
+service: ${env:SERVICE}
 
 useDotenv: true
 
@@ -30,27 +30,40 @@ provider:
       Resource: "arn:aws:dynamodb:${aws:region}:*:*"
     - Effect: "Allow"
       Action:
+        - "dynamodb:DescribeStream"
+        - "dynamodb:GetRecords"
+        - "dynamodb:GetShardIterator"
+        - "dynamodb:ListStreams"
+      Resource:
+        - !Sub "${pageTable.Arn}/*"
+    - Effect: "Allow"
+      Action:
         - "s3:GetObject"
         - "s3:GetObjectAcl"
         - "s3:PutObject"
         - "s3:PutObjectAcl"
       Resource: "arn:aws:s3:::*"
-  ecr:
-    images:
-      web:
-        path: ./
-        file: Dockerfile
+    - Effect: Allow
+      Sid: AllowCloudFrontUpdateDistribution
+      Action:
+        - cloudfront:updateDistribution
+      Resource: "*"
+#  ecr:
+#    images:
+#      web:
+#        path: ./
+#        file: Dockerfile
 
 package:
  exclude:
    - ./**
  include:
-   - ./api/bin/**
-   - ./api/bin/.fonts/*
+   - ./functions/bin/**
+   - ./functions/bin/.fonts/*
 
 functions:
   page-create:
-    handler: api/bin/page-create
+    handler: functions/bin/page-create
     events:
       - http:
           path: page/create
@@ -60,7 +73,7 @@ functions:
       SITE_BUCKET: ${env:BUCKET_NAME_SITE}
     url: true
   page-load:
-    handler: api/bin/page-load
+    handler: functions/bin/page-load
     events:
       - http:
           path: page/load
@@ -69,14 +82,16 @@ functions:
       REGION: ${aws:region}
     url: true
   page-update:
-    handler: api/bin/page-update
+    handler: functions/bin/page-update
     events:
       - http:
           path: page/update
           method: post
     environment:
       REGION: ${aws:region}
+      SITE_BUCKET: ${env:BUCKET_NAME_SITE}
     url: true
+    timeout: 10
   screenshot:
     environment:
       AFTER_LOADED_WAIT: 150
@@ -84,9 +99,9 @@ functions:
       RESOLUTION_W: 768
       RESOLUTION_H: 432
       JPG_QUALITY: 90
-      BUCKET_NAME: !Ref screenshotBucket
+      BUCKET_NAME: !Ref assetsBucket
       REGION: ${aws:region}
-    handler: api/bin/screenshot
+    handler: functions/bin/screenshot
     events:
       - http:
           path: screenshot
@@ -94,6 +109,21 @@ functions:
     url: true
     timeout: 30
     memorySize: 2048
+  og-image-create:
+    handler: functions/bin/og-image-create
+    events:
+      - stream:
+          type: dynamodb
+          arn: !GetAtt pageTable.StreamArn
+          batchSize: 1
+          maximumRetryAttempts: 1
+    environment:
+      RESOLUTION_W: 1200
+      RESOLUTION_H: 630
+      JPG_QUALITY: 90
+      BUCKET_NAME: !Ref assetsBucket
+      REGION: ${aws:region}
+  
 
 resources:
   Resources:
@@ -108,15 +138,17 @@ resources:
           - AttributeName: pageId
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
-    screenshotBucket:
+        StreamSpecification:
+          StreamViewType: KEYS_ONLY
+    assetsBucket:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${env:BUCKET_NAME}
         AccessControl: PublicRead
-    screenshotBucketPolicy:
+    assetsBucketPolicy:
       Type: AWS::S3::BucketPolicy
       Properties:
-        Bucket: !Ref screenshotBucket
+        Bucket: !Ref assetsBucket
         PolicyDocument:
           Version: "2012-10-17"
           Statement:
@@ -124,7 +156,7 @@ resources:
               Action:
                 - "s3:GetObject"
               Resource:
-                - !Sub "${screenshotBucket.Arn}/*"
+                - !Sub "${assetsBucket.Arn}/*"
               Principal: "*"
     websiteBucket:
       Type: AWS::S3::Bucket
@@ -158,6 +190,9 @@ custom:
             CacheControl: 'no-cache'
         - "*.js":
             CacheControl: 'public, max-age=31536000'
+    - bucketName: ${env:BUCKET_NAME}
+      localDir: assets
+      deleteRemoved: false
 
 plugins:
   - serverless-s3-sync
