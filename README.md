@@ -1,7 +1,7 @@
 # LinkCatalog
 > Live demo: [linkcatalog.fyi](https://linkcatalog.fyi)
 
-**WIP** Serverless website project that utilizes Serverless Framework, AWS, Golang, and Preact.
+**WIP** Serverless website project that utilizes Serverless Framework, AWS, Golang, and Preact
 
 ### Idea
 A website that allows a user to create a shareable 'catalog' of links without signing up for the website
@@ -14,7 +14,7 @@ A website that allows a user to create a shareable 'catalog' of links without si
   - `Create Og Image` creates an og-image when a page is added to the DynamoDB table
 
 ### Frontend
-`web` folder contains the Preact frontend that Serverless Framework serves to an s3 bucket on deployment. `page-create` and `page-update` API calls create a new static page in the s3 bucket.
+`web` folder contains the Preact frontend that Serverless Framework serves to an s3 bucket on deployment. `page-create` and `page-update` API calls create a new static page in the s3 bucket
 
  ### To-do
   - Home page
@@ -22,4 +22,5 @@ A website that allows a user to create a shareable 'catalog' of links without si
   - Tests
   - User input validation
   - Security improvements
+  - Features & Bug fixes
   - etc...
