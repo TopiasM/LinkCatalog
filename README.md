@@ -3,6 +3,9 @@
 
 **WIP** Serverless website project that utilizes Serverless Framework, AWS, Golang, and Preact.
 
+### Idea
+A website that allows a user to create a shareable 'catalog' of links without signing up for the website
+
 ### Backend
 - `serverless.yml` is used to define the AWS services(s3, DynamoDB, Lambda). <sup>(For the Live Demo I did Route53 and Cloudfront configuration in the control panel, so these are not included in the yml file)
 - Lambda functions in the `Functions` folder
