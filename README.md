@@ -1,7 +1,7 @@
 # LinkCatalog
 > Live demo: [linkcatalog.fyi](https://linkcatalog.fyi)
 
-Serverless website project that utilizes Serverless Framework, AWS, Golang, and Preact.
+**WIP** Serverless website project that utilizes Serverless Framework, AWS, Golang, and Preact.
 
 ### Backend
 - `serverless.yml` is used to define the AWS services(s3, DynamoDB, Lambda). <sup>(For the Live Demo I did Route53 and Cloudfront configuration in the control panel, so these are not included in the yml file)
@@ -12,3 +12,11 @@ Serverless website project that utilizes Serverless Framework, AWS, Golang, and 
 
 ### Frontend
 `web` folder contains the Preact frontend that Serverless Framework serves to an s3 bucket on deployment. `page-create` and `page-update` API calls create a new static page in the s3 bucket.
+
+ ### To-do
+  - Home page
+  - Website design improvements
+  - Tests
+  - User input validation
+  - Security improvements
+  - etc...
