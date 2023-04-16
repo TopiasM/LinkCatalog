@@ -11,7 +11,7 @@ A website that allows a user to create a shareable 'catalog' of links without si
 - Go Lambda functions in the `Functions` folder
   - `Page create/load/update` RESP API functions for CRUD operations 
   - `Screenshot` REST API function that uses Headless Chrome to take a screenshot of a page, and then saves it to an s3 bucket
-  - `Create Og Image` creates an og-image when a page is added to the DynamoDB table
+  - `Og Image Create` trigger function creates an og-image when a page is added to the DynamoDB table
 
 ### Frontend
 `web` folder contains the Preact frontend that Serverless Framework serves to an s3 bucket on deployment. `page-create` and `page-update` API calls create a new static page in the s3 bucket
